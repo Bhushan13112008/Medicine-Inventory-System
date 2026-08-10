@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Medicine Inventory System</title>
+  <link rel="stylesheet" href="dashboard_styles.css">
+</head>
+<body class="dashboard-body">
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-brand">
+      <img src="image.png" alt="Med Inventory Logo" class="nav-logo" />
+      <h1>Medicine Inventory</h1>
+    </div>
+    <div class="user-menu-container">
+      <button id="userMenuBtn" class="user-menu-btn">
+        <span id="userEmailDisplay">Account</span> ▾
+      </button>
+      <div id="userDropdown" class="dropdown-menu">
+        <button id="openUpdatePasswordBtn" class="dropdown-item">Update Password</button>
+        <button id="openDeleteAccountBtn" class="dropdown-item text-danger">Delete Account</button>
+        <div class="dropdown-divider"></div>
+        <button id="logoutBtn" class="dropdown-item">Log Out</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="dashboard-container">
+    
+    <!-- Action Bar: Search & Add Button -->
+    <section class="controls-bar">
+      <input 
+        type="text" 
+        id="search-input" 
+        class="search-input" 
+        placeholder="Search medicines by name or category..."
+      />
+      <button id="add-medicine-btn" class="btn">+ Add Medicine</button>
+    </section>
+
+    <!-- Inventory Stats Cards -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Medicines</h3>
+        <p id="total-medicines-count">0</p>
+      </div>
+      <div class="stat-card warning">
+        <h3>Low Stock Items</h3>
+        <p id="low-stock-count">0</p>
+      </div>
+      <div class="stat-card">
+        <h3>Categories</h3>
+        <p id="categories-count">0</p>
+      </div>
+    </section>
+
+    <!-- Medicine Inventory Table -->
+    <section class="table-container">
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Price ($)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="medicine-table-body">
+          <tr>
+            <td colspan="6" class="empty-state">Loading inventory data...</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <!-- Medicine Details Modal -->
+  <div id="details-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Medicine Details</h2>
+        <span id="close-modal-btn" class="close-btn">&times;</span>
+      </div>
+      <div class="modal-body" id="modal-details-content"></div>
+    </div>
+  </div>
+
+  <!-- Expandable Update Medicine Modal -->
+  <div id="update-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Update Medicine</h2>
+        <span id="close-update-modal-btn" class="close-btn">&times;</span>
+      </div>
+      <form id="update-medicine-form" style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+        <input type="hidden" id="update-id" />
+        
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="color: var(--text-secondary); font-size: 0.85rem;">Name</label>
+          <input type="text" id="update-name" class="search-input" />
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="color: var(--text-secondary); font-size: 0.85rem;">Category</label>
+          <input type="text" id="update-category" class="search-input" />
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Dosage Form</label>
+            <input type="text" id="update-dosage-form" class="search-input" placeholder="e.g. Tablet, Syrup" />
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Stock Quantity</label>
+            <input type="number" id="update-quantity" class="search-input" min="0" />
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Unit Price ($)</label>
+            <input type="number" id="update-price" step="0.01" class="search-input" min="0" />
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Reorder Level</label>
+            <input type="number" id="update-reorder" class="search-input" min="0" />
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="color: var(--text-secondary); font-size: 0.85rem;">Expiry Date</label>
+          <input type="date" id="update-expiry-date" class="search-input" />
+        </div>
+
+        <button type="button" id="toggle-more-fields-btn" class="btn btn-secondary" style="margin-top: 4px; font-size: 0.85rem;">
+          + More Details
+        </button>
+
+        <div id="more-fields-container" class="more-fields-box hidden">
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Generic Name</label>
+            <input type="text" id="update-generic-name" class="search-input" />
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Strength</label>
+            <input type="text" id="update-strength" class="search-input" />
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Manufacturer</label>
+            <input type="text" id="update-manufacturer" class="search-input" />
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+          <button type="button" id="cancel-update-btn" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Medicine Modal -->
+  <div id="add-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add New Medicine</h2>
+        <span id="close-add-modal-btn" class="close-btn">&times;</span>
+      </div>
+      <form id="add-medicine-form" style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+        
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="color: var(--text-secondary); font-size: 0.85rem;">Name *</label>
+          <input type="text" id="add-name" required class="search-input" placeholder="e.g. Metacin" />
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="color: var(--text-secondary); font-size: 0.85rem;">Category *</label>
+          <input type="text" id="add-category" required class="search-input" placeholder="e.g. Tablet" />
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Dosage Form *</label>
+            <input type="text" id="add-dosage-form" required placeholder="e.g. Tablet, Syrup" class="search-input" />
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Stock Quantity *</label>
+            <input type="number" id="add-quantity" required class="search-input" min="0" value="0" />
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Unit Price ($) *</label>
+            <input type="number" id="add-price" step="0.01" required class="search-input" min="0" value="0.00" />
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Reorder Level *</label>
+            <input type="number" id="add-reorder" required class="search-input" min="0" value="5" />
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label style="color: var(--text-secondary); font-size: 0.85rem;">Expiry Date *</label>
+          <input type="date" id="add-expiry-date" required class="search-input" />
+        </div>
+
+        <button type="button" id="toggle-add-more-fields-btn" class="btn btn-secondary" style="margin-top: 4px; font-size: 0.85rem;">
+          + More Details
+        </button>
+
+        <div id="add-more-fields-container" class="more-fields-box hidden">
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Generic Name</label>
+            <input type="text" id="add-generic-name" class="search-input" />
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Strength</label>
+            <input type="text" id="add-strength" placeholder="e.g. 500mg" class="search-input" />
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <label style="color: var(--text-secondary); font-size: 0.85rem;">Manufacturer</label>
+            <input type="text" id="add-manufacturer" class="search-input" />
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+          <button type="button" id="cancel-add-btn" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn">Save Medicine</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Update Password Modal -->
+  <div id="updatePasswordModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-btn" id="closeUpdatePasswordModal">&times;</span>
+      <h2>Update Password</h2>
+      <form id="updatePasswordForm">
+        <div class="form-group">
+          <label for="updateEmail">Email</label>
+          <input type="email" id="updateEmail" required readonly />
+        </div>
+        <div class="form-group">
+          <label for="currentPassword">Current Password</label>
+          <input type="password" id="currentPassword" placeholder="Enter current password" required />
+        </div>
+        <div class="form-group">
+          <label for="newPassword">New Password</label>
+          <input type="password" id="newPassword" placeholder="Enter new password" required />
+        </div>
+        <button type="submit" class="btn-primary">Update Password</button>
+      </form>
+      <p id="updatePasswordStatus" class="status-msg"></p>
+    </div>
+  </div>
+
+  <!-- Delete Account Modal -->
+  <div id="deleteAccountModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-btn" id="closeDeleteAccountModal">&times;</span>
+      <h2 style="color: #ef4444;">Delete Account</h2>
+      <form id="deleteAccountForm">
+        <div class="form-group">
+          <label for="deleteEmail">Email</label>
+          <input type="email" id="deleteEmail" required readonly />
+          <button type="button" id="sendDeleteOtpBtn" class="btn-secondary" style="margin-top: 8px;">Send OTP</button>
+        </div>
+        <div class="form-group">
+          <label for="deleteOtp">OTP</label>
+          <input type="text" id="deleteOtp" placeholder="Enter 6-digit OTP" required />
+        </div>
+        <button type="submit" class="btn-danger">Delete Account</button>
+      </form>
+      <p id="deleteAccountStatus" class="status-msg"></p>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
