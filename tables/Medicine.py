@@ -10,7 +10,7 @@ class Medicine(Base):
 
     user_id:Mapped[UUID] = mapped_column(ForeignKey("login.id"), nullable = False)
     id:Mapped[UUID] = mapped_column(Uuid, primary_key = True, default = uuid4)
-    name:Mapped[str] = mapped_column(String, unique = True, nullable = False)
+    name:Mapped[str] = mapped_column(String, unique = False, nullable = False)
     generic_name:Mapped[str] = mapped_column(String, nullable = True)
     category:Mapped[str] = mapped_column(String, nullable = False)
     dosage_form:Mapped[str] = mapped_column(String, nullable = False)
