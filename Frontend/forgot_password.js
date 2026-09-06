@@ -1,3 +1,5 @@
+const API_BASE = "https://medicine-inventory-system-3923.onrender.com";
+
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('forgot-password-form');
   const emailInput = document.getElementById('email');
@@ -20,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sendOtpBtn.textContent = 'Sending...';
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/login/request-otp', {
+        const response = await fetch(`${API_BASE}/login/request-otp`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -62,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/login/forgot_password', {
+        const response = await fetch(`${API_BASE}/login/forgot_password`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

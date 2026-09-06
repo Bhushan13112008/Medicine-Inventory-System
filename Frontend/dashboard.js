@@ -1,3 +1,5 @@
+const API_BASE = "https://medicine-inventory-system-3923.onrender.com";
+
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('userToken');
   const userEmail = localStorage.getItem('userEmail');
@@ -46,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch Inventory from FastAPI
   async function fetchMedicines() {
     try {
-      const response = await fetch('http://127.0.0.1:8000/medicine/medicines', {
+      const response = await fetch(`${API_BASE}/medicine/medicines`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -190,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/medicine/create_medicine', {
+        const response = await fetch(`${API_BASE}/medicine/create_medicine`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -276,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       try {
-        const response = await fetch(`http://127.0.0.1:8000/medicine/medicines/${id}`, {
+        const response = await fetch(`${API_BASE}/medicine/medicines/${id}`, {
           method: 'PATCH',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -304,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!confirm('Are you sure you want to delete this medicine?')) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/medicine/medicines/${id}`, {
+      const response = await fetch(`${API_BASE}/medicine/medicines/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -393,8 +395,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetchMedicines();
 });
-
-const API_BASE = "http://127.0.0.1:8000";
 
 document.addEventListener("DOMContentLoaded", () => {
     const userEmail = localStorage.getItem("userEmail") || "";
